@@ -14,27 +14,31 @@ class City(models.Model):
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=200, verbose_name='Имя')
-    last_name = models.CharField(max_length=200, verbose_name='Фамилия')
+    first_name = models.CharField(max_length=200, verbose_name='First Name')
+    last_name = models.CharField(max_length=200, verbose_name='Last Name')
     other_name = models.CharField(
         max_length=200,
-        verbose_name='Отчество',
+        verbose_name='Other Name',
         blank=True,
         null=True
     )
-    email = models.EmailField(max_length=254, verbose_name='Email')
-    phone = models.CharField(max_length=20, verbose_name='Номер телефона')
-    birthday = models.DateField(verbose_name='Дата рождения')
+    email = models.CharField(max_length=200, verbose_name='Email')
+    phone = models.CharField(max_length=20, verbose_name='Phone')
+    birthday = models.DateField(verbose_name='Birthday')
     city = models.ForeignKey(
         City,
         on_delete=models.SET_NULL,
-        verbose_name='Город')
+        verbose_name='City',
+        blank=True,
+        null=True)
     additional_info = models.TextField(
-        verbose_name='Дополнительная информация'
+        verbose_name='Дополнительная информация',
+        blank=True,
+        null=True
     )
     is_admin = models.BooleanField(
         default=False,
-        verbose_name='Администратор'
+        verbose_name='Is Admin'
     )
 
     class Meta:

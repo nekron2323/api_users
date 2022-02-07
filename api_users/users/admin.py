@@ -15,4 +15,4 @@ class CityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(City, CityAdmin)
+admin.site.register(City)
