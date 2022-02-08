@@ -1,6 +1,6 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-
 
 class City(models.Model):
     name = models.CharField(max_length=200, verbose_name='Город')
@@ -13,16 +13,11 @@ class City(models.Model):
         return self.name
 
 
-class User(models.Model):
-    first_name = models.CharField(max_length=200, verbose_name='First Name')
-    last_name = models.CharField(max_length=200, verbose_name='Last Name')
-    other_name = models.CharField(
-        max_length=200,
-        verbose_name='Other Name',
-        blank=True,
-        null=True
-    )
-    email = models.CharField(max_length=200, verbose_name='Email')
+class User(AbstractUser):
+    first_name = models.CharField('First Name', max_length=30, blank=True)
+    last_name = models.CharField('Last Name', max_length=150, blank=True)
+    other_name = models.CharField('Other Name', max_length=150, blank=True)
+    email = models.EmailField('Email', blank=True)
     phone = models.CharField(max_length=20, verbose_name='Phone')
     birthday = models.DateField(verbose_name='Birthday')
     city = models.ForeignKey(
@@ -40,10 +35,4 @@ class User(models.Model):
         default=False,
         verbose_name='Is Admin'
     )
-
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-    def __str__(self):
-        return self.first_name + self.last_name
+    
