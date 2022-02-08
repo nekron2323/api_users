@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import City, User
+from users.models import User
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
@@ -21,3 +21,10 @@ class UpdateUserResponseModel(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'other_name',
                   'email', 'phone', 'birthday')
+
+
+class PrivateUserModel(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'other_name', 'email', 'phone',
+                  'birthday', 'city', 'additional_info', 'is_admin', 'username', 'password')

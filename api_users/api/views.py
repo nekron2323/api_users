@@ -11,15 +11,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from uritemplate import partial
 
 from .paginations import UserListPagination
-from .serializers import (CurrentUserSerializer,
+from .permissions import IsAdmin
+from .serializers import (CurrentUserSerializer, PrivateUserModel,
                           UpdateUserResponseModel, UserInfoSerializer)
 from users.models import User
 
 
 def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
     return {
-        'access': refresh.access_token
+        'access': RefreshToken.for_user(user).access_token
     }
 
 
@@ -103,3 +103,19 @@ class UserInfoViewSet(
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class PrivateUserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = PrivateUserModel
+    pagination_class = UserListPagination
+    permission_classes = (IsAdmin, )
+    http_method_names = ('get', 'post', 'patch', 'delete')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.initial_data['username'] = request.data.get('login')
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
