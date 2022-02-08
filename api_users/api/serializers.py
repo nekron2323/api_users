@@ -26,5 +26,11 @@ class UpdateUserResponseModel(serializers.ModelSerializer):
 class PrivateUserModel(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'city')
+
+
+class PrivateDetailUserModel(serializers.ModelSerializer):
+    class Meta:
+        model = User
         fields = ('first_name', 'last_name', 'other_name', 'email', 'phone',
                   'birthday', 'city', 'additional_info', 'is_admin', 'username', 'password')

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class City(models.Model):
     name = models.CharField(max_length=200, verbose_name='Город')
 
@@ -18,7 +19,10 @@ class User(AbstractUser):
     other_name = models.CharField('Other Name', max_length=150, blank=True)
     email = models.EmailField('Email', blank=True)
     phone = models.CharField(max_length=20, verbose_name='Phone')
-    birthday = models.DateField(verbose_name='Birthday')
+    birthday = models.DateField(
+        verbose_name='Birthday',
+        blank=True,
+        null=True)
     city = models.ForeignKey(
         City,
         on_delete=models.SET_NULL,
@@ -34,4 +38,3 @@ class User(AbstractUser):
         default=False,
         verbose_name='Is Admin'
     )
-    
