@@ -129,9 +129,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'api.authenticate.Authentication',        
-#     ),    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'api.authenticates.Authentication',        
+    ),    
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1000),

@@ -1,18 +1,27 @@
 from django.conf import settings
-from urllib import request
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.authentication import authenticate
+from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from uritemplate import partial
 
-from .serializers import CurrentUserSerializer
+from .paginations import UserListPagination
+from .serializers import (CurrentUserSerializer,
+                          UpdateUserResponseModel, UserInfoSerializer)
+from users.models import User
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return {
         'access': refresh.access_token
     }
+
 
 class LoginView(APIView):
     def post(self, request, format=None):
@@ -56,9 +65,41 @@ class LoginView(APIView):
             status=status.HTTP_404_NOT_FOUND
         )
 
+
 class LogoutView(APIView):
     def get(self, request):
         response = Response()
         response.delete_cookie(key=settings.SIMPLE_JWT['AUTH_COOKIE'])
         response.data = "Вы вышли из системы"
         return response
+
+
+class UserInfoViewSet(
+        mixins.ListModelMixin,
+        mixins.UpdateModelMixin,
+        viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = UserListPagination
+    http_method_names = ('get', 'patch')
+
+    @action(methods=['get'], detail=False)
+    def current(self, request):
+        response = Response()
+        response.data = CurrentUserSerializer(
+            request.user).data
+        return response
+
+    def partial_update(self, request, *args, **kwargs):
+        user = get_object_or_404(User, pk=kwargs.get('pk'))
+        if user != request.user:
+            raise PermissionDenied()
+        kwargs['partial'] = True
+        instance = self.get_object()
+        serializer = UpdateUserResponseModel(
+            instance, data=request.data, partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
