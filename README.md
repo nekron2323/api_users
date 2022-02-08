@@ -37,19 +37,19 @@ pip install -r requirements.txt
 Создать супер юзера:
 
 ```
-python3 manage.py createsuperuser
+python3 api_users/manage.py createsuperuser
 ```
 
 Выполнить миграции:
 
 ```
-python3 manage.py migrate
+python3 api_users/manage.py migrate
 ```
 
 Запустить проект:
 
 ```
-python3 manage.py runserver
+python3 api_users/manage.py runserver
 ```
 
 Структурированное описание сервиса можно посмотреть на странице http://127.0.0.1:8000/swagger/
